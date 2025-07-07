@@ -26,8 +26,9 @@
 }
 
 .booking-form input[type="text"],
-.booking-form input[type="datetime-local"],
-.booking-form input[type="number"] {
+.booking-form input[type="number"],
+.booking-form input[type="date"],
+.booking-form input[type="time"] {
   padding: 0.5rem;
   border: 1px solid #000;
   border-radius: 4px;
@@ -35,6 +36,18 @@
 }
 
 .trip-type {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 1rem;
+}
+
+.trip-type label {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.datetime-group {
   display: flex;
   gap: 1rem;
 }
