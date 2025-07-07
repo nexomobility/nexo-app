@@ -189,7 +189,10 @@ const BookingStepOne = ({ apiKey, onNext }) => {
         )}
 
         {calculated && (
-          <button type="submit" className="next-button">Weiter</button>
+          <>
+            <div className="price-display">Gesamtpreis: {price.toFixed(2)} €</div>
+            <button type="submit" className="next-button">Weiter</button>
+          </>
         )}
       </form>
     </div>
