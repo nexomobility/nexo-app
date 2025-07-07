@@ -66,6 +66,24 @@
   cursor: pointer;
 }
 
+.calculate-button {
+  padding: 0.75rem;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.fade {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.fade.show {
+  opacity: 1;
+}
+
 .next-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;

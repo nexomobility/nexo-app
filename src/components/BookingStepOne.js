@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './BookingStepOne.css';
 
-const KILOMETER_PRICE = 1.5; // Euro per km
+const KILOMETER_PRICE = 1.25; // Euro per km netto
 
 function loadGoogleMapsScript(apiKey) {
   return new Promise((resolve, reject) => {
@@ -28,6 +28,7 @@ const BookingStepOne = ({ apiKey, onNext }) => {
   const [tripType, setTripType] = useState('oneway');
   const [distanceKm, setDistanceKm] = useState(null);
   const [price, setPrice] = useState(null);
+  const [calculated, setCalculated] = useState(false);
 
   const fromInputRef = useRef(null);
   const toInputRef = useRef(null);
@@ -65,11 +66,12 @@ const BookingStepOne = ({ apiKey, onNext }) => {
             const distanceMeters = response.rows[0].elements[0].distance.value;
             const km = distanceMeters / 1000;
             setDistanceKm(km);
-            setPrice(km * KILOMETER_PRICE);
           }
         }
       );
     }
+    setCalculated(false);
+    setPrice(null);
   }, [fromAddress, toAirport]);
 
   const handleSubmit = (e) => {
@@ -90,11 +92,11 @@ const BookingStepOne = ({ apiKey, onNext }) => {
   };
 
   return (
-    <div className="booking-step-one">
-      <h1>Willkommen zur Nexo-App</h1>
-      <form onSubmit={handleSubmit} className="booking-form">
-        <div className="trip-type">
-          <label>
+    <div className="booking-step-one bg-white text-black min-h-screen flex flex-col items-center justify-center p-8">
+      <h1 className="text-2xl font-semibold mb-4">Willkommen zur Nexo-App</h1>
+      <form onSubmit={handleSubmit} className="booking-form flex flex-col gap-4 w-full max-w-md">
+        <div className="trip-type flex justify-around mb-4">
+          <label className="flex items-center gap-1">
             <input
               type="radio"
               value="oneway"
@@ -103,7 +105,7 @@ const BookingStepOne = ({ apiKey, onNext }) => {
             />
             Nur Hinfahrt
           </label>
-          <label>
+          <label className="flex items-center gap-1">
             <input
               type="radio"
               value="return"
@@ -112,7 +114,7 @@ const BookingStepOne = ({ apiKey, onNext }) => {
             />
             Nur Rückfahrt
           </label>
-          <label>
+          <label className="flex items-center gap-1">
             <input
               type="radio"
               value="roundtrip"
@@ -122,25 +124,25 @@ const BookingStepOne = ({ apiKey, onNext }) => {
             Hin- und Rückfahrt
           </label>
         </div>
-        <label>
+        <label className="flex flex-col text-left text-sm">
           Abholadresse
-          <input type="text" ref={fromInputRef} placeholder="Abholadresse" required />
+          <input type="text" ref={fromInputRef} placeholder="Abholadresse" required className="p-2 border border-gray-400 rounded" />
         </label>
-        <label>
+        <label className="flex flex-col text-left text-sm">
           Zielflughafen
-          <input type="text" ref={toInputRef} placeholder="Flughafen" required />
+          <input type="text" ref={toInputRef} placeholder="Flughafen" required className="p-2 border border-gray-400 rounded" />
         </label>
-        <div className="datetime-group">
-          <label>
+        <div className="datetime-group flex gap-4">
+          <label className="flex flex-col text-left text-sm flex-1">
             Datum der Abfahrt
-            <input type="date" value={departureDate} onChange={(e) => setDepartureDate(e.target.value)} required />
+            <input type="date" value={departureDate} onChange={(e) => setDepartureDate(e.target.value)} required className="p-2 border border-gray-400 rounded" />
           </label>
-          <label>
+          <label className="flex flex-col text-left text-sm flex-1">
             Uhrzeit der Abfahrt
-            <input type="time" value={departureTime} onChange={(e) => setDepartureTime(e.target.value)} required />
+            <input type="time" value={departureTime} onChange={(e) => setDepartureTime(e.target.value)} required className="p-2 border border-gray-400 rounded" />
           </label>
         </div>
-        <label>
+        <label className="flex flex-col text-left text-sm">
           Anzahl der Personen
           <input
             type="number"
@@ -148,9 +150,10 @@ const BookingStepOne = ({ apiKey, onNext }) => {
             max="8"
             value={passengers}
             onChange={(e) => setPassengers(parseInt(e.target.value, 10))}
+            className="p-2 border border-gray-400 rounded"
           />
         </label>
-        <label>
+        <label className="flex flex-col text-left text-sm">
           Anzahl Gepäckstücke
           <input
             type="number"
@@ -158,12 +161,34 @@ const BookingStepOne = ({ apiKey, onNext }) => {
             max="8"
             value={luggage}
             onChange={(e) => setLuggage(parseInt(e.target.value, 10))}
+            className="p-2 border border-gray-400 rounded"
           />
         </label>
         {distanceKm != null && (
-          <div className="price-display">Distanz: {distanceKm.toFixed(2)} km</div>
+          <div className="price-display font-semibold mt-4">Distanz: {distanceKm.toFixed(2)} km</div>
         )}
-        <button type="submit" className="next-button" disabled={distanceKm == null}>Weiter</button>
+
+        {distanceKm != null && !calculated && (
+          <button
+            type="button"
+            className="calculate-button"
+            onClick={() => {
+              const brutto = distanceKm * KILOMETER_PRICE * 1.19;
+              setPrice(brutto);
+              setCalculated(true);
+            }}
+          >
+            Fahrpreis berechnen
+          </button>
+        )}
+
+        {calculated && price != null && (
+          <div className="price-display fade show">Preis: {price.toFixed(2)} €</div>
+        )}
+
+        {calculated && (
+          <button type="submit" className="next-button">Weiter</button>
+        )}
       </form>
     </div>
   );
