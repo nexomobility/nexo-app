@@ -75,6 +75,15 @@
   cursor: pointer;
 }
 
+.distance-button {
+  padding: 0.75rem;
+  background: #10b981;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
 .fade {
   opacity: 0;
   transition: opacity 0.5s ease-in-out;
