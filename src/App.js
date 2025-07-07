@@ -7,7 +7,7 @@ function App() {
 
   return (
     <div className="App">
-      <BookingStepOne apiKey={apiKey} />
+      <BookingStepOne apiKey="AIzaSyBw_MiOfkc-lQ_YSG5jKNM9lEaR8nbKSNg" />
     </div>
   );
 }
