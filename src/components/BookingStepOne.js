@@ -52,27 +52,30 @@ const BookingStepOne = ({ apiKey, onNext }) => {
   }, [apiKey]);
 
   useEffect(() => {
-    if (fromAddress && toAirport) {
-      if (!window.google) return;
-      const service = new window.google.maps.DistanceMatrixService();
-      service.getDistanceMatrix(
-        {
-          origins: [fromAddress],
-          destinations: [toAirport],
-          travelMode: window.google.maps.TravelMode.DRIVING,
-        },
-        (response, status) => {
-          if (status === 'OK') {
-            const distanceMeters = response.rows[0].elements[0].distance.value;
-            const km = distanceMeters / 1000;
-            setDistanceKm(km);
-          }
-        }
-      );
-    }
+    setDistanceKm(null);
     setCalculated(false);
     setPrice(null);
   }, [fromAddress, toAirport]);
+
+  const calculateDistance = () => {
+    if (!fromAddress || !toAirport) return;
+    if (!window.google) return;
+    const service = new window.google.maps.DistanceMatrixService();
+    service.getDistanceMatrix(
+      {
+        origins: [fromAddress],
+        destinations: [toAirport],
+        travelMode: window.google.maps.TravelMode.DRIVING,
+      },
+      (response, status) => {
+        if (status === 'OK') {
+          const distanceMeters = response.rows[0].elements[0].distance.value;
+          const km = distanceMeters / 1000;
+          setDistanceKm(km);
+        }
+      }
+    );
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -164,6 +167,15 @@ const BookingStepOne = ({ apiKey, onNext }) => {
             className="p-2 border border-gray-400 rounded"
           />
         </label>
+        {fromAddress && toAirport && distanceKm == null && (
+          <button
+            type="button"
+            className="distance-button"
+            onClick={calculateDistance}
+          >
+            Strecke berechnen
+          </button>
+        )}
         {distanceKm != null && (
           <div className="price-display font-semibold mt-4">Distanz: {distanceKm.toFixed(2)} km</div>
         )}
