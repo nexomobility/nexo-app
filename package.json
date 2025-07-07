@@ -2,7 +2,7 @@
   "name": "nexo-app",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://github.com/nexomobility/nexo-app"
+  "homepage": "https://nexomobility.github.io/nexo-app"
   "dependencies": {
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
