@@ -21,8 +21,10 @@ function loadGoogleMapsScript(apiKey) {
 const BookingStepOne = ({ apiKey, onNext }) => {
   const [fromAddress, setFromAddress] = useState('');
   const [toAirport, setToAirport] = useState('');
-  const [departure, setDeparture] = useState('');
+  const [departureDate, setDepartureDate] = useState('');
+  const [departureTime, setDepartureTime] = useState('');
   const [passengers, setPassengers] = useState(1);
+  const [luggage, setLuggage] = useState(0);
   const [tripType, setTripType] = useState('oneway');
   const [distanceKm, setDistanceKm] = useState(null);
   const [price, setPrice] = useState(null);
@@ -73,7 +75,17 @@ const BookingStepOne = ({ apiKey, onNext }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (onNext) {
-      onNext({ fromAddress, toAirport, departure, passengers, tripType, distanceKm, price });
+      onNext({
+        fromAddress,
+        toAirport,
+        departureDate,
+        departureTime,
+        passengers,
+        luggage,
+        tripType,
+        distanceKm,
+        price,
+      });
     }
   };
 
@@ -81,6 +93,35 @@ const BookingStepOne = ({ apiKey, onNext }) => {
     <div className="booking-step-one">
       <h1>Willkommen zur Nexo-App</h1>
       <form onSubmit={handleSubmit} className="booking-form">
+        <div className="trip-type">
+          <label>
+            <input
+              type="radio"
+              value="oneway"
+              checked={tripType === 'oneway'}
+              onChange={() => setTripType('oneway')}
+            />
+            Nur Hinfahrt
+          </label>
+          <label>
+            <input
+              type="radio"
+              value="return"
+              checked={tripType === 'return'}
+              onChange={() => setTripType('return')}
+            />
+            Nur Rückfahrt
+          </label>
+          <label>
+            <input
+              type="radio"
+              value="roundtrip"
+              checked={tripType === 'roundtrip'}
+              onChange={() => setTripType('roundtrip')}
+            />
+            Hin- und Rückfahrt
+          </label>
+        </div>
         <label>
           Abholadresse
           <input type="text" ref={fromInputRef} placeholder="Abholadresse" required />
@@ -89,26 +130,38 @@ const BookingStepOne = ({ apiKey, onNext }) => {
           Zielflughafen
           <input type="text" ref={toInputRef} placeholder="Flughafen" required />
         </label>
-        <label>
-          Datum & Uhrzeit der Abfahrt
-          <input type="datetime-local" value={departure} onChange={(e) => setDeparture(e.target.value)} required />
-        </label>
-        <label>
-          Anzahl der Personen
-          <input type="number" min="1" max="8" value={passengers} onChange={(e) => setPassengers(parseInt(e.target.value, 10))} />
-        </label>
-        <div className="trip-type">
+        <div className="datetime-group">
           <label>
-            <input type="radio" value="oneway" checked={tripType === 'oneway'} onChange={() => setTripType('oneway')} /> Nur Hinfahrt
+            Datum der Abfahrt
+            <input type="date" value={departureDate} onChange={(e) => setDepartureDate(e.target.value)} required />
           </label>
           <label>
-            <input type="radio" value="roundtrip" checked={tripType === 'roundtrip'} onChange={() => setTripType('roundtrip')} /> Hin- und Rückfahrt
+            Uhrzeit der Abfahrt
+            <input type="time" value={departureTime} onChange={(e) => setDepartureTime(e.target.value)} required />
           </label>
         </div>
+        <label>
+          Anzahl der Personen
+          <input
+            type="number"
+            min="1"
+            max="8"
+            value={passengers}
+            onChange={(e) => setPassengers(parseInt(e.target.value, 10))}
+          />
+        </label>
+        <label>
+          Anzahl Gepäckstücke
+          <input
+            type="number"
+            min="0"
+            max="8"
+            value={luggage}
+            onChange={(e) => setLuggage(parseInt(e.target.value, 10))}
+          />
+        </label>
         {distanceKm != null && (
-          <div className="price-display">
-            Distanz: {distanceKm.toFixed(2)} km – Preis: {price.toFixed(2)} €
-          </div>
+          <div className="price-display">Distanz: {distanceKm.toFixed(2)} km</div>
         )}
         <button type="submit" className="next-button" disabled={distanceKm == null}>Weiter</button>
       </form>
