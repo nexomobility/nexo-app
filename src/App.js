@@ -1,15 +1,13 @@
-import logo from './logo.svg';
 import './App.css';
+import BookingStepOne from './components/BookingStepOne';
+// Willkommen zur Nexo-App
 
 function App() {
+  const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || '';
+
   return (
     <div className="App">
-      <div className="welcome-container">
-        <img src={logo} className="App-logo" alt="logo" />
-        <h1>Willkommen zur Nexo-App</h1>
-        <p>Starte deine Reise mit uns.</p>
-        <button className="get-started">Los geht's</button>
-      </div>
+      <BookingStepOne apiKey={apiKey} />
     </div>
   );
 }
