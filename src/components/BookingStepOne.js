@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './BookingStepOne.css';
-
-const KILOMETER_PRICE = 1.25; // Euro per km netto
+import { calculateDistanceAndPrice } from '../utils/calcLogic';
 
 function loadGoogleMapsScript(apiKey) {
   return new Promise((resolve, reject) => {
@@ -57,27 +56,16 @@ const BookingStepOne = ({ apiKey, onNext }) => {
     setPrice(null);
   }, [fromAddress, toAirport]);
 
-  const calculateDistanceAndPrice = () => {
+  const handleCalculate = async () => {
     if (!fromAddress || !toAirport) return;
-    if (!window.google) return;
-    const service = new window.google.maps.DistanceMatrixService();
-    service.getDistanceMatrix(
-      {
-        origins: [fromAddress],
-        destinations: [toAirport],
-        travelMode: window.google.maps.TravelMode.DRIVING,
-      },
-      (response, status) => {
-        if (status === 'OK') {
-          const distanceMeters = response.rows[0].elements[0].distance.value;
-          const km = distanceMeters / 1000;
-          setDistanceKm(km);
-          const brutto = km * KILOMETER_PRICE * 1.19;
-          setPrice(brutto);
-          setCalculated(true);
-        }
-      }
-    );
+    try {
+      const result = await calculateDistanceAndPrice(fromAddress, toAirport);
+      setDistanceKm(result.distanceKm);
+      setPrice(result.price);
+      setCalculated(true);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const handleSubmit = (e) => {
@@ -170,6 +158,16 @@ const BookingStepOne = ({ apiKey, onNext }) => {
             className="p-2 border border-gray-400 rounded"
           />
         </label>
+        {fromAddress && toAirport && (
+          <button
+            type="button"
+            className="calculate-button"
+            onClick={handleCalculate}
+          >
+            Strecke &amp; Preis berechnen
+          </button>
+        )}
+
         {calculated && (
           <div className="result-box">
             <span className="result-icon">➔</span>
@@ -177,15 +175,6 @@ const BookingStepOne = ({ apiKey, onNext }) => {
               Distanz: {distanceKm.toFixed(2)} km – Preis: {price.toFixed(2)} €
             </span>
           </div>
-        )}
-        {fromAddress && toAirport && (
-          <button
-            type="button"
-            className="calculate-button"
-            onClick={calculateDistanceAndPrice}
-          >
-            Strecke &amp; Preis berechnen
-          </button>
         )}
 
         {calculated && (
