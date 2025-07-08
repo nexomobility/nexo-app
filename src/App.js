@@ -1,7 +1,7 @@
 import './App.css';
 import BookingStepOne from './components/BookingStepOne';
 import BookingStepTwo from './components/BookingStepTwo';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 // Willkommen zur Nexo-App
 
 function App() {
@@ -9,13 +9,26 @@ function App() {
   const [step, setStep] = useState(1);
   const [bookingData, setBookingData] = useState(null);
 
+  useEffect(() => {
+    const determineStepFromHash = () => {
+      if (window.location.hash === '#/bookingtwo') {
+        setStep(2);
+      } else {
+        setStep(1);
+      }
+    };
+    determineStepFromHash();
+    window.addEventListener('hashchange', determineStepFromHash);
+    return () => window.removeEventListener('hashchange', determineStepFromHash);
+  }, []);
+
   const handleNext = (data) => {
     setBookingData(data);
-    setStep(2);
+    window.location.hash = '#/bookingtwo';
   };
 
   const handleBack = () => {
-    setStep(1);
+    window.location.hash = '#/';
   };
 
   return (
