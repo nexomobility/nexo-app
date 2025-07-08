@@ -120,11 +120,27 @@ const BookingStepOne = ({ apiKey, onNext }) => {
         </div>
         <label className="flex flex-col text-left text-sm">
           Abholadresse
-          <input type="text" ref={fromInputRef} placeholder="Abholadresse" required className="p-2 border border-gray-400 rounded" />
+          <input
+            type="text"
+            ref={fromInputRef}
+            placeholder="Abholadresse"
+            value={fromAddress}
+            onChange={(e) => setFromAddress(e.target.value)}
+            required
+            className="p-2 border border-gray-400 rounded"
+          />
         </label>
         <label className="flex flex-col text-left text-sm">
           Zielflughafen
-          <input type="text" ref={toInputRef} placeholder="Flughafen" required className="p-2 border border-gray-400 rounded" />
+          <input
+            type="text"
+            ref={toInputRef}
+            placeholder="Flughafen"
+            value={toAirport}
+            onChange={(e) => setToAirport(e.target.value)}
+            required
+            className="p-2 border border-gray-400 rounded"
+          />
         </label>
         <div className="datetime-group flex gap-4">
           <label className="flex flex-col text-left text-sm flex-1">
